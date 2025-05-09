@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useFrameworkReady } from '@/hooks/useFrameworkReady';
@@ -8,14 +8,17 @@ import { SplashScreen } from 'expo-router';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { AuthProvider } from '@/contexts/AuthContext';
 
-// Импортируем сервис инициализации
+// Импортируем сервис инициализации и кастомный сплеш-скрин
 import AppInitialization from '../lib/AppInitialization';
+import CustomSplash from '../components/CustomSplash';
+import { View } from 'react-native';
 
 // Prevent splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   useFrameworkReady();
+  const [showCustomSplash, setShowCustomSplash] = useState(true);
 
   const [fontsLoaded, fontError] = useFonts({
     'Inter-Regular': Inter_400Regular,
@@ -28,9 +31,19 @@ export default function RootLayout() {
 
   // Hide splash screen once fonts are loaded
   useEffect(() => {
-    if (fontsLoaded || fontError) {
-      SplashScreen.hideAsync();
-    }
+    const hideSplash = async () => {
+      if (fontsLoaded || fontError) {
+        // Сначала скрываем системный сплеш-скрин
+        await SplashScreen.hideAsync();
+        
+        // После этого показываем кастомный на несколько секунд
+        setTimeout(() => {
+          setShowCustomSplash(false);
+        }, 3000);
+      }
+    };
+    
+    hideSplash();
   }, [fontsLoaded, fontError]);
 
   // Инициализация API ключей и настройка фоновой синхронизации
@@ -42,6 +55,11 @@ export default function RootLayout() {
   // Return null to keep splash screen visible while fonts load
   if (!fontsLoaded && !fontError) {
     return null;
+  }
+
+  // Если нужно показать кастомный сплеш-скрин
+  if (showCustomSplash) {
+    return <CustomSplash onAnimationComplete={() => setShowCustomSplash(false)} />;
   }
 
   return (

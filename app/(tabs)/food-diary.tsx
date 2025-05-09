@@ -6,7 +6,7 @@ import { BarChart, LineChart } from 'react-native-chart-kit';
 import { Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useThemeColor } from '../../contexts/ThemeContext';
-import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
+import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { Plus, ChevronLeft, ChevronRight, Search, BarChart3, Camera } from 'lucide-react-native';
 import { Stack } from 'expo-router';
 

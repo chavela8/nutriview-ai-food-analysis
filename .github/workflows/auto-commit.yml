@@ -1,0 +1,32 @@
+name: Auto Commit and Push Changes
+
+on:
+  schedule:
+    # Запускается каждый день в 20:00 по Москве
+    - cron: '0 20 * * *'  # По UTC это будет 23:00 в вашем местном времени
+  push:
+    branches:
+      - main  # или название вашей основной ветки
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python (если нужно, или можно настроить для вашего проекта)
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add .
+          git commit -m "Automated commit and push"
+          git push origin main  # Или ваша основная ветка
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
